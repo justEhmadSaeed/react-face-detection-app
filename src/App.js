@@ -1,10 +1,11 @@
-import React from 'react'
+import React, { useState } from 'react'
 import './App.css'
 import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm'
 import Logo from './components/Logo/Logo'
 import Navigation from './components/Navigation/Navigation'
 import Rank from './components/Rank/Rank'
 import Particles from 'react-particles-js'
+import Clarifai from 'clarifai'
 
 const particlesOptions = {
 	particles: {
@@ -15,30 +16,37 @@ const particlesOptions = {
 				value_area: 300
 			}
 		}
-	},
-	interactivity: {
-		detect_on: 'canvas',
-		events: {
-			onhover: { enable: true, mode: 'repulse' },
-			resize: true
-		},
-		modes: {
-			grab: { distance: 400, line_linked: { opacity: 1 } },
-			bubble: { distance: 400, size: 40, duration: 2, opacity: 8, speed: 3 },
-			repulse: { distance: 100, duration: 0.4 },
-			push: { particles_nb: 4 },
-			remove: { particles_nb: 2 }
-		}
 	}
 }
+
+const app = new Clarifai.App({
+	apiKey: 'cf4f0c2c945948578669896929cb81d4'
+})
 const App = () => {
+	const [input, setInput] = useState('')
+
+	const onInputChange = (event) => setInput(event.target.value)
+	const onButtonSubmit = () => {
+		console.log('click')
+		app.models
+			.predict(
+				'a403429f2ddf4b49b307e318f00e528b',
+				'https://samples.clarifai.com/face-det.jpg'
+			)
+			.then((response) => {
+				console.log(response)
+			})
+	}
 	return (
 		<div className='App'>
 			<Particles className='particles' params={particlesOptions} />
 			<Navigation />
 			<Logo />
 			<Rank />
-			<ImageLinkForm />
+			<ImageLinkForm
+				onInputChange={onInputChange}
+				onButtonSubmit={onButtonSubmit}
+			/>
 			{/* 
 			<FaceRecognition /> */}
 		</div>
