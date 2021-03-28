@@ -6,6 +6,7 @@ import Navigation from './components/Navigation/Navigation'
 import Rank from './components/Rank/Rank'
 import Particles from 'react-particles-js'
 import Clarifai from 'clarifai'
+import FaceRecognition from './components/FaceRecognition/FaceRecognition'
 
 const particlesOptions = {
 	particles: {
@@ -24,18 +25,15 @@ const app = new Clarifai.App({
 })
 const App = () => {
 	const [input, setInput] = useState('')
+	const [imageUrl, setImageUrl] = useState('')
 
 	const onInputChange = (event) => setInput(event.target.value)
 	const onButtonSubmit = () => {
 		console.log('click')
-		app.models
-			.predict(
-				'a403429f2ddf4b49b307e318f00e528b',
-				'https://samples.clarifai.com/face-det.jpg'
-			)
-			.then((response) => {
-				console.log(response)
-			})
+		setImageUrl(input)
+		app.models.predict(Clarifai.FACE_DETECT_MODEL, input).then((response) => {
+			console.log(response.outputs[0].data.regions)
+		})
 	}
 	return (
 		<div className='App'>
@@ -47,8 +45,7 @@ const App = () => {
 				onInputChange={onInputChange}
 				onButtonSubmit={onButtonSubmit}
 			/>
-			{/* 
-			<FaceRecognition /> */}
+			<FaceRecognition imageUrl={imageUrl} />
 		</div>
 	)
 }
