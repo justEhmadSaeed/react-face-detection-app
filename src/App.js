@@ -7,6 +7,7 @@ import Rank from './components/Rank/Rank'
 import Particles from 'react-particles-js'
 import Clarifai from 'clarifai'
 import FaceRecognition from './components/FaceRecognition/FaceRecognition'
+import SignIn from './components/SignIn/SignIn'
 
 const particlesOptions = {
 	particles: {
@@ -27,6 +28,7 @@ const App = () => {
 	const [input, setInput] = useState('')
 	const [imageUrl, setImageUrl] = useState('')
 	const [box, setBox] = useState({})
+	const [route, setRoute] = useState('signin')
 
 	const onInputChange = (event) => setInput(event.target.value)
 
@@ -55,18 +57,28 @@ const App = () => {
 			})
 			.catch((err) => console.log(err))
 	}
+	const onRouteChange = (route) => {
+		setRoute(route)
+	}
+
 	console.log(box)
 	return (
 		<div className='App'>
 			<Particles className='particles' params={particlesOptions} />
-			<Navigation />
-			<Logo />
-			<Rank />
-			<ImageLinkForm
-				onInputChange={onInputChange}
-				onButtonSubmit={onButtonSubmit}
-			/>
-			<FaceRecognition box={box} imageUrl={imageUrl} />
+			<Navigation onRouteChange={onRouteChange} />
+			{route === 'signin' ? (
+				<SignIn onRouteChange={onRouteChange} />
+			) : (
+				<div>
+					<Logo />
+					<Rank />
+					<ImageLinkForm
+						onInputChange={onInputChange}
+						onButtonSubmit={onButtonSubmit}
+					/>
+					<FaceRecognition box={box} imageUrl={imageUrl} />
+				</div>
+			)}
 		</div>
 	)
 }
