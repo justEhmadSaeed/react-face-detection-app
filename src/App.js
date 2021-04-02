@@ -8,6 +8,7 @@ import Particles from 'react-particles-js'
 import Clarifai from 'clarifai'
 import FaceRecognition from './components/FaceRecognition/FaceRecognition'
 import SignIn from './components/SignIn/SignIn'
+import Register from './components/Register/Register'
 
 const particlesOptions = {
 	particles: {
@@ -29,6 +30,7 @@ const App = () => {
 	const [imageUrl, setImageUrl] = useState('')
 	const [box, setBox] = useState({})
 	const [route, setRoute] = useState('signin')
+	const [isSignedIn, setisSignedIn] = useState(false)
 
 	const onInputChange = (event) => setInput(event.target.value)
 
@@ -48,7 +50,6 @@ const App = () => {
 	}
 
 	const onButtonSubmit = () => {
-		console.log('click')
 		setImageUrl(input)
 		app.models
 			.predict(Clarifai.FACE_DETECT_MODEL, input)
@@ -58,6 +59,9 @@ const App = () => {
 			.catch((err) => console.log(err))
 	}
 	const onRouteChange = (route) => {
+		if (route === 'signout') setisSignedIn(false)
+		else if (route === 'home') setisSignedIn(true)
+
 		setRoute(route)
 	}
 
@@ -65,10 +69,8 @@ const App = () => {
 	return (
 		<div className='App'>
 			<Particles className='particles' params={particlesOptions} />
-			<Navigation onRouteChange={onRouteChange} />
-			{route === 'signin' ? (
-				<SignIn onRouteChange={onRouteChange} />
-			) : (
+			<Navigation isSignedIn={isSignedIn} onRouteChange={onRouteChange} />
+			{route === 'home' ? (
 				<div>
 					<Logo />
 					<Rank />
@@ -78,6 +80,10 @@ const App = () => {
 					/>
 					<FaceRecognition box={box} imageUrl={imageUrl} />
 				</div>
+			) : route === 'signin' ? (
+				<SignIn onRouteChange={onRouteChange} />
+			) : (
+				<Register onRouteChange={onRouteChange} />
 			)}
 		</div>
 	)
